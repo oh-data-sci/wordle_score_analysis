@@ -50,6 +50,10 @@ and for **player b**:
 
 the question we would like to answer is *which strategy performs better?*
 
+## graphical comparison
+one way to do so is by eye: here are the two score distributions plotted for the two players. one might get a sense that the weight of **player a**'s bars are on the leftwards side of the spectrum compared to **player b**. but comparison of the 3rd guess columns complicates that interpretation. in any event, how can we make that intuition more formal?
+![distribution plot](img/score_distribution_by_player.png)
+
 # method one: the median number of guesses
 *definition*: given a list of scores, the median score_ is the score that splits the list in even halves, such that half the scores are less than or equal to the median score, and half the scores are greater than or equal to the median score.
 
@@ -118,7 +122,7 @@ meaning **player b**'s strategy yielded the correct answer in, on average, 3.87 
 **conclusion**: **player a** has a very slightly *lower arithmetic mean number of guesses*, and thus a better strategy.
 
 # method four: weighted average score
-definition: the arithmetic mean is just and blind, as it considers all game outcomes equally important. on the other hand, a *weighted average* assigns unequal importance to the outcomes, scales the outcomes by their importance, and calculates the net average of the scaled values. the value of this method is that we can encapsulate more information and intuitions about the system we are modeling, but the drawbacks are that the weights could be assigned in many different ways, and thus the choice needs to be carefully justified, and the score is harder to interpret.
+*definition*: the arithmetic mean is just and blind, as it considers all game outcomes equally important. on the other hand, a *weighted average* assigns unequal importance to the outcomes, scales the outcomes by their importance, and calculates the net average of the scaled values. the value of this method is that we can encapsulate more information and intuitions about the system we are modeling, but the drawbacks are that the weights could be assigned in many different ways, and thus the choice needs to be carefully justified, and the score is harder to interpret.
 
 this may be a reasonable approach given the fact that the players accumulate more (chances of acquiring) information about the true word as their number of guesses rises. given that the players have more information, a wrong 5th guess is making a larger error than a wrong second guess. we can translate that intuition into a weighted average. looking at it the other way, guessing the right word after two failures is a greater stroke of brilliance *given the information available at the time* than is guessing the right word after 3 or more failures. 
 
@@ -162,7 +166,7 @@ yield an average weighted penalty score of 11.8.
 # statistical analysis
 it is obvious that, in the case at hand, the two players perform at a similar level. while it is useful to rigorously define rules that can determine a winner, regardless of how close the race may be, it is also worth asking whether the two stategies can be confidently said to differ at all. what given the data of past performances, which strategy, if either, should we expect to perform better going forwards? is there any real difference between them we can probe that question in a couple of different ways:
 
-## student's t-test for comparin two sample means
+## student's t-test for comparing two sample means
 *assumption*: the student t-test applies when we assume the two samples (sets of scores of **a** and **b**) to be drawn from normally distributed populations with an unknown mean, (and variance), and each draw independent from the previous.
 
 *null hypothesis*: there is no difference between the average number of guesses required by each of the two players.
@@ -215,4 +219,4 @@ beyond predicting future performance, that result will be unsatifying for the pu
 
 which player's strategy performs better depends on the method/metric we choose. the median cannot distinguish between the two players, but the balance point favours player b. conversely, the average number of guesses required is slightly lower for player a, and that lead remains (in fact, *increases*) if we apply a simple but harsh *available-information-penalty-weighting* on the score.
 
-on balance, i declare the narrowest of victories to **player a**.
+on balance, and influenced by the graph, i declare the narrowest of victories to **player a**.
