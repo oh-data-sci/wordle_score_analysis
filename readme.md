@@ -4,9 +4,9 @@ wordle scoring
 two people play a game where they must guess a five letter word in a maximum of 6 guesses, where every wrong guess returns some hints as to what the right word is. each player uses their own strategy to play, and they each believe their own strategy to be superior. can we help them find out which is the better strategy?
 
 ## the scores
-when the players have played 100 games, and their scores are tallied up (number of times they discovered the true word in _k_ guesses for _k_ in [1..6]).
+when the players have each played 100 games, and their scores are tallied up (number of times they discovered the true word in _k_ guesses for _k_ in [1..6]).
 
-for **player a,** their game summary looks like:
+for **player a,** their game summary is:
 
     |-------------|-----------|
     | num guesses | num games |
@@ -71,13 +71,14 @@ and for **player b**:
 
 # method two: the balance point of guesses
 *definition*: the balance point of a list of outcomes is a hypothetical outcome that splits the list evenly, like a fulcrum balancing scales.
+
 *hypothesis*: the player with the lower balance point of number of guesses has the better strategy. 
 
 though the median number of guesses is 4 for both players, the number of times they achieved that score is not the same between them. 
 
 - for **player a**:
-    - lower half of the scores: [  0,  3, 31, 16,  0,  0]
-    - upper half of the scores: [  0,  0,  0, 33, 15,  2]
+    - lower half of the scores: [  0,  3, 31, 16,  0,  0 ]
+    - upper half of the scores: [  0,  0,  0, 33, 15,  2 ]
     - the balance point score is 3 + 16/49 = **3.327**
 - for **player b**:
     - lower half of the scores: [  0,  2, 37, 11,  0,  0]
@@ -158,33 +159,50 @@ yield an average weighted penalty score of 11.8.
 
 **conclusion**: 11.4 < 11.8 and **player a**'s strategy makes better use of the available information.
 
-# statistical analysis of difference
-it is obvious that, in the case at hand, the two players perform at a similar level. though it is useful to rigorously define rule that can determine which is the winner, it is also worth asking whether there is any significant evidence based on past performance, as to whether the two stategies can be confidently said to differ at all. we can probe that question in a couple of different ways:
+# statistical analysis
+it is obvious that, in the case at hand, the two players perform at a similar level. while it is useful to rigorously define rules that can determine a winner, regardless of how close the race may be, it is also worth asking whether the two stategies can be confidently said to differ at all. what given the data of past performances, which strategy, if either, should we expect to perform better going forwards? is there any real difference between them we can probe that question in a couple of different ways:
 
 ## student's t-test for comparin two sample means
-*assumption*: the student t-test applies when we assume the two samples (sets of scores of **a** and **b**) are each drawn from a normally distributed populations with an unknown mean, and variance. (each draw independent from the previous).
+*assumption*: the student t-test applies when we assume the two samples (sets of scores of **a** and **b**) to be drawn from normally distributed populations with an unknown mean, (and variance), and each draw independent from the previous.
 
 *null hypothesis*: there is no difference between the average number of guesses required by each of the two players.
 
 *alternate hypothesis*: either **player a** has higher expected average number of guesses or **player b** has higher expected average number of guesses. 
 
-    assuming equal variance
-    `t-statistic: -0.4203, p-value=0.67`
-    relaxing assumption of equal variance doesn't change outcomes:
-    `t-statistic: -0.4203, pvalue=0.67)`
+for the unmodified scores we get: 
 
-this result tells us that there is not enough evidence in the data to reject the null-hypothesis. i.e. had the two samples been random draws from a normal distribution with the same mean number or guesses, we would expect the data to thus collected  generate the same amount of difference between the sets.
+    assuming equal variance or relaxing assumption of equal variance doesn't change outcome:
+    t-statistic = -0.4203
+    pvalue = 0.67
+
+for the weight-scaled scores we get:
+
+    assuming equal variance or relaxing assumption of equal variance doesn't change outcome:
+    t-test statistic=-0.575
+    pvalue=0.566
+
+
+this tells us that there is not enough evidence in the data to reject the null-hypothesis. i.e. had the two samples been random draws from a normal distribution with the same mean number or guesses, we could expect the data to thus collected generate the same amount of difference between the sets.
 
 ## kolmogorov-smirnov test of shared population distribution
-*assumption*: we need not assume that the two sets of scores were drawn from a normally distributed population.
+*assumption*: we need not assume that the two sets of scores were drawn from a normally distributed population, merely that the draws are independent.
 
-*null hypothesis*: the two sets of scores are drawn from the same population distribution
+*null hypothesis*: the two sets of scores are drawn from the same population distribution.
+
+*alternate hypothesis*: the two sets of scores are samples from separate population distributions.
+
+for both the raw, unmodified scores, and the weight scaled scores we get: 
+
+    k-s statistic = 0.08
+    pvalue = 0.908
+
+from which we can conclude that the value sets are not sufficiently different to support the belief that they were drawn from separate distributions. ergo there is no *significant difference* between the sets.
 
 
 # conclusions
-there is no evidence in the available data suggesting statistically significant difference between the performance of the two players. whatever tiny difference is observed, is most likely a result of statistical fluke more than a systematic.
+there is no evidence in the available data suggesting statistically significant difference between the performance of the two players. whatever small differences are observed, it is more likely to be a result of statistical fluke more than a systematic effect. therefore we should not believe that this difference is destined to remain as is in future observations. 
 
-that conclusion stands for the purposes of predicting future performance, but will be unsatifying for the purposes of determining a winner in the game. for determining the winner, we can devise various methods, and associated metrics to compare the players and determine the winner. we have shown the outcome of four such methods above. unfortunately, as the performances are quite close, the metrics of these methods do not agree on the winner. 
+beyond predicting future performance, that result will be unsatifying for the purposes of determining a winner in this game. for determining the winner, we can devise various methods, and associated metrics to compare the players. we have shown the outcome of four such methods above. unfortunately, as the performances are quite close, the metrics of these methods do not agree on the winner, forcing us to pick and choose the most appropriate metric.
 
     |------------------------|---------------|
     |                 metric |        winner |
@@ -195,6 +213,6 @@ that conclusion stands for the purposes of predicting future performance, but wi
     | weighted average score |  **player a** |
     |------------------------|---------------|
 
-which player's strategy performs better depends on the metric we choose. the median cannot distinguish between the two players, but the balance point favours player b. conversely, the average number of guesses required is slightly lower for player a, and that lead increases if we apply a simple but harsh *available_information-penalty-weighting* on the score.
+which player's strategy performs better depends on the method/metric we choose. the median cannot distinguish between the two players, but the balance point favours player b. conversely, the average number of guesses required is slightly lower for player a, and that lead remains (in fact, *increases*) if we apply a simple but harsh *available-information-penalty-weighting* on the score.
 
 on balance, i declare the narrowest of victories to **player a**.
