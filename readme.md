@@ -4,9 +4,9 @@ wordle scoring
 two people play a game where they must guess a five letter word in a maximum of 6 guesses, where every wrong guess returns some hints as to what the right word is. each player uses their own strategy to play, and they each believe their own strategy to be superior. can we help them find out which is the better strategy?
 
 ## the scores
-when the players have each played 100 games, and their scores are tallied up (number of times they discovered the true word in _k_ guesses for _k_ in [1..6]).
+when the players have each played 100 games their scores are tallied up (number of times they discovered the true word in _k_ guesses for _k_ in [1..6]).
 
-for **player a,** their game summary is:
+**player a**'s game summary is:
 
     |-------------|-----------|
     | num guesses | num games |
@@ -19,7 +19,7 @@ for **player a,** their game summary is:
     |           6 |         2 |
     |-------------|-----------|
 
-but for **player b** it is:
+and **player b**'s is:
 
     |-------------|-----------|
     | num guesses | num games |
@@ -48,14 +48,16 @@ and for **player b**:
     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5,
     5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6
 
-the question we would like to answer is *which strategy performs better?*
+the question we would like to answer is *which player's strategy performs better?*
 
 ## graphical comparison
-one way to do so is by eye: here are the two score distributions plotted for the two players. one might get a sense that the weight of **player a**'s bars are on the leftwards side of the spectrum compared to **player b**. but comparison of the 3rd guess columns complicates that interpretation. in any event, how can we make that intuition more formal?
+one way to tackle this is by eye: the following bar chart shows the score distributions for the two players. one might get a sense that the weight of **player a**'s bars are on the leftwards side of the range compared to **player b**. comparison of the 3rd guess columns complicates that interpretation. in any event, how can we make this intuition more formal?
 ![distribution plot](img/score_distribution_by_player.png)
 
+we will look into four ways to do so.
+
 # method one: the median number of guesses
-*definition*: given a list of scores, the median score_ is the score that splits the list in even halves, such that half the scores are less than or equal to the median score, and half the scores are greater than or equal to the median score.
+*definition*: given a list of scores, the *median score* is the score that splits the list in even halves, such that half the scores are less than or equal to the median score, and half the scores are greater than or equal to the median score.
 
 *hypothesis*: the player with the lower median number of guesses has the better strategy.
 
@@ -119,12 +121,12 @@ likewise for **player b**:
 
 meaning **player b**'s strategy yielded the correct answer in, on average, 3.87 guesses. 
 
-**conclusion**: **player a** has a very slightly *lower arithmetic mean number of guesses*, and thus a better strategy.
+**conclusion**: **player a** wins with a very slightly *lower arithmetic mean number of guesses*, and thus a better strategy.
 
 # method four: weighted average score
-*definition*: the arithmetic mean is just and blind, as it considers all game outcomes equally important. on the other hand, a *weighted average* assigns unequal importance to the outcomes, scales the outcomes by their importance, and calculates the net average of the scaled values. the value of this method is that we can encapsulate more information and intuitions about the system we are modeling, but the drawbacks are that the weights could be assigned in many different ways, and thus the choice needs to be carefully justified, and the score is harder to interpret.
+*definition*: the arithmetic mean is just and blind, as it considers all game outcomes equally important. on the other hand, a *weighted average* assigns unequal importance to the outcomes, scales the outcomes by their importance, and calculates the net average of the scaled values. the value of this method is that we can encapsulate more information and intuitions about the system we are modeling, but the drawbacks are that the weights could be assigned in many different ways, and thus the choice of weights is debatable and needs to be carefully justified. additionally the resulting score is harder to interpret.
 
-this may be a reasonable approach given the fact that the players accumulate more (chances of acquiring) information about the true word as their number of guesses rises. given that the players have more information, a wrong 5th guess is making a larger error than a wrong second guess. we can translate that intuition into a weighted average. looking at it the other way, guessing the right word after two failures is a greater stroke of brilliance *given the information available at the time* than is guessing the right word after 3 or more failures. 
+this may be a reasonable approach given the fact that the players accumulate more information about the true word (at least they have more chance of acquiring such information whether they do or not) as their number of guesses rises. given that the players have more information, a wrong 5th guess is making a larger error than a wrong second guess.  looking at it the other way, guessing the right word after two failures is a greater stroke of brilliance *given the information available at the time* than is guessing the right word after 3 or more failures. we can translate that intuition into a weighted average.
 
 there are many ways one could distribute the weights across the scores. one simple way would be to consider every wrong guess as providing the same amount (1 unit) of "information" about the true word, and weigh the scores by the amount of information accumulated at time of guess.
 
@@ -139,9 +141,7 @@ there are many ways one could distribute the weights across the scores. one simp
     |            6 |                     5 |             30 |
     |--------------|-----------------------|----------------|
 
-as can be seen by the weighted score above, this method exaggerates the penalty of requiring more guesses (the penalty grows with _k_ as _k_ squared.) a more moderate approach can easily be devised, but is not considered here.
-
-given this (admittedly harsh) weighting, the scores for **player a** get transformed to:
+as can be seen by the weighted score above, this method exaggerates the penalty of requiring more guesses (the penalty grows with _k_ as _k_ squared.) a more moderate approach can easily be devised, but is not considered here. given this (admittedly harsh) weighting, the scores for **player a** get transformed to:
 
      2,  2,  2,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,
      6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6, 12, 12, 12, 12, 12, 12,
@@ -161,12 +161,12 @@ likewise, **player b**'s weighted penalty scores:
 
 yield an average weighted penalty score of 11.8.
 
-**conclusion**: 11.4 < 11.8 and **player a**'s strategy makes better use of the available information.
+**conclusion**: 11.4 < 11.8 and **player a** wins with a strategy that makes better use of the available information.
 
 # statistical analysis
-it is obvious that, in the case at hand, the two players perform at a similar level. while it is useful to rigorously define rules that can determine a winner, regardless of how close the race may be, it is also worth asking whether the two stategies can be confidently said to differ at all. what given the data of past performances, which strategy, if either, should we expect to perform better going forwards? is there any real difference between them we can probe that question in a couple of different ways:
+it is obvious that, in the case at hand, the two players perform at a similar level. while it is useful to rigorously define rules that can determine a winner, regardless of how close the race may be, it is also worth asking whether the two stategies can be confidently said to differ at all. what given the data of past performances, which strategy, if either, should we expect to perform better going forwards? is there any real difference between them? we can probe that question in a couple of different ways:
 
-## student's t-test for comparing two sample means
+## 1. student's t-test for comparing two sample means
 *assumption*: the student t-test applies when we assume the two samples (sets of scores of **a** and **b**) to be drawn from normally distributed populations with an unknown mean, (and variance), and each draw independent from the previous.
 
 *null hypothesis*: there is no difference between the average number of guesses required by each of the two players.
@@ -185,28 +185,27 @@ for the weight-scaled scores we get:
     t-test statistic=-0.575
     pvalue=0.566
 
-
 this tells us that there is not enough evidence in the data to reject the null-hypothesis. i.e. had the two samples been random draws from a normal distribution with the same mean number or guesses, we could expect the data to thus collected generate the same amount of difference between the sets.
 
-## kolmogorov-smirnov test of shared population distribution
+## kolmogorov-smirnov test for shared population distribution
 *assumption*: we need not assume that the two sets of scores were drawn from a normally distributed population, merely that the draws are independent.
 
 *null hypothesis*: the two sets of scores are drawn from the same population distribution.
 
-*alternate hypothesis*: the two sets of scores are samples from separate population distributions.
+*alternate hypothesis*: the two sets of scores were sampled from separate population distributions.
 
 for both the raw, unmodified scores, and the weight scaled scores we get: 
 
     k-s statistic = 0.08
     pvalue = 0.908
 
-from which we can conclude that the value sets are not sufficiently different to support the belief that they were drawn from separate distributions. ergo there is no *significant difference* between the sets.
+from which we conclude that the sets of scores are not sufficiently different to support the belief that they were drawn from separate distributions. ergo there is no *significant difference* between the sets.
 
 
 # conclusions
 there is no evidence in the available data suggesting statistically significant difference between the performance of the two players. whatever small differences are observed, it is more likely to be a result of statistical fluke more than a systematic effect. therefore we should not believe that this difference is destined to remain as is in future observations. 
 
-beyond predicting future performance, that result will be unsatifying for the purposes of determining a winner in this game. for determining the winner, we can devise various methods, and associated metrics to compare the players. we have shown the outcome of four such methods above. unfortunately, as the performances are quite close, the metrics of these methods do not agree on the winner, forcing us to pick and choose the most appropriate metric.
+beyond predicting future performance, that result will sound unsatifying for the purposes of determining a winner in this game. for the purposes of declaring a winner, we can devise various methods, and associated metrics to compare the players. we have shown the outcome of four such methods above. unfortunately, as the performances are quite close, the metrics of these methods do not agree on the winner, forcing us to pick and choose the most appropriate metric.
 
     |------------------------|---------------|
     |                 metric |        winner |
@@ -219,4 +218,4 @@ beyond predicting future performance, that result will be unsatifying for the pu
 
 which player's strategy performs better depends on the method/metric we choose. the median cannot distinguish between the two players, but the balance point favours player b. conversely, the average number of guesses required is slightly lower for player a, and that lead remains (in fact, *increases*) if we apply a simple but harsh *available-information-penalty-weighting* on the score.
 
-on balance, and influenced by the graph, i declare the narrowest of victories to **player a**.
+on balance, and influenced by the graph above, i declare the narrowest of victories to **player a**.
